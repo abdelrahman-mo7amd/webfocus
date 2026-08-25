@@ -167,6 +167,13 @@ async function startTracking(domain) {
 }
 
 
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab)=> {
+    if(!changeInfo.url || !tab.active){
+        return;
+    }
 
-
+    const url = new URL(changeInfo.url);
+    const domain = url.hostname.replace("www.", "");
+    await startTracking(domain);
+});
 
