@@ -1,5 +1,19 @@
 console.log("WebFocus is running!");
 
+function getDomain(url) {
+    try {
+        const parsedUrl = new URL(url);
+
+        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+            return null;
+        }
+
+        return parsedUrl.hostname.replace(/^www\./, "");
+    } catch {
+        return null;
+    }
+}
+
 async function getTrackingState() {
     const data = await chrome.storage.session.get([
         'currentDomain',
@@ -36,21 +50,41 @@ async function stopTracking() {
 }
 
 
-chrome.tabs.onActivated.addListener(async (activeInfo)=> {
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
     const [tab] = await chrome.tabs.query({
         active:true,
-        lastFocusedWindow: true
+        lastFocusedWindow:true
     });
 
-    if (!tab || !tab.url){
+    if (!tab || !tab.url) {
         return;
     }
 
-    const url = new URL(tab.url);
-    const domain = url.hostname.replace("www.", "");
+    const domain = getDomain(tab.url);
+
+    if (!domain) {
+        await stopTracking();
+        return;
+    }
+
     await startTracking(domain);
 });
 
+
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    if (!changeInfo.url || !tab.active){
+        return;
+    }
+
+    const domain = getDomain(changeInfo.url);
+
+    if(!domain){
+        await stopTracking();
+        return;
+    }
+
+    await startTracking(domain);
+});
 
 
 async function save_time (domain, time) {
@@ -108,19 +142,23 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
         return;
     }
 
-    console.log("Chrome got focus");
+    console.log("Chrome get focus");
 
     const [tab] = await chrome.tabs.query({
-        active:true, 
-        windowId: windowId
+        active:true,
+        windowId:windowId
     });
 
     if (!tab || !tab.url) {
         return;
     }
 
-    const url = new URL(tab.url);
-    const domain = url.hostname.replace("www." , "");
+    const domain = getDomain(tab.url);
+    
+    if (!domain) {
+        await stopTracking();
+        return;
+    }
 
     await startTracking(domain);
 })
@@ -131,19 +169,23 @@ chrome.idle.onStateChanged.addListener(async (state) => {
     if (state === 'active') {
         const [tab] = await chrome.tabs.query({
             active:true,
-            lastFocusedWindow: true,
+            lastFocusedWindow: true
         });
 
-        if (!tab || !tab.url) {
+        if (!tab || !tab.url){
             return;
         }
 
-        const url = new URL(tab.url);
-        const domain = url.hostname.replace("www.", "");
+        const domain = getDomain(tab.url);
 
-        console.log("Current domain: ", domain);
+        if (!domain) {
+            await stopTracking();
+            return;
+        }
+
+        console.log("Current domain: " , domain);
         await startTracking(domain);
-    } 
+    }
 
     if (state === 'idle' || state === 'locked'){
         await stopTracking();
@@ -167,13 +209,4 @@ async function startTracking(domain) {
 }
 
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab)=> {
-    if(!changeInfo.url || !tab.active){
-        return;
-    }
-
-    const url = new URL(changeInfo.url);
-    const domain = url.hostname.replace("www.", "");
-    await startTracking(domain);
-});
 
