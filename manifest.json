@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "WebFocus | Browsing Time Analyzer",
+    "version": "0.1.0",
+    "description": "Tracks how you actually spend time in Chrome and make insights about it. 100% local storage for your privacy.",
+    "permissions": ["tabs", "storage", "idle", "alarms", "downloads"],
+    "host_permissions": ["<all_urls>"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "WebFocus"
+    }
+}
