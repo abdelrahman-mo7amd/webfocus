@@ -1,4 +1,4 @@
-console.log("WebFocus is running!");
+let saveQueue = Promise.resolve();
 
 function getDomain(url) {
     try {
@@ -14,26 +14,98 @@ function getDomain(url) {
     }
 }
 
+function dateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function todayKey() {
+    return dateKey(new Date());
+}
+
 async function getTrackingState() {
     const data = await chrome.storage.session.get([
         'currentDomain',
-        'startTime'
+        'startTime',
+        'tabId'
     ]);
 
     return {
         currentDomain: data.currentDomain || null,
-        startTime: data.startTime || null
+        startTime: data.startTime || null,
+        tabId: data.tabId || null
     };
 }
 
-
-async function setTrackingState(domain, startTime) {
+async function setTrackingState(domain, startTime, tabId) {
     await chrome.storage.session.set({
         currentDomain: domain, 
-        startTime: startTime
+        startTime: startTime,
+        tabId: tabId
     });
 }
 
+function save_time(domain, startTime, endTime) {
+    saveQueue = saveQueue.then(async () => {
+        let currentTime = startTime;
+        while (currentTime < endTime){
+            const startDate = new Date(currentTime);
+            const nextDay = new Date(startDate);
+            nextDay.setHours(24, 0, 0, 0);
+
+            const segmentEnd = Math.min(
+                endTime,
+                nextDay.getTime()
+            );
+
+            const key = `data:${dateKey(startDate)}`;
+
+            const data = await chrome.storage.local.get(key);
+            const today = data[key] || {};
+
+            const oldTime = today[domain] || 0;
+            const elapsed = segmentEnd - currentTime;
+
+            today[domain] = oldTime + elapsed;
+
+            await chrome.storage.local.set({
+                [key]: today
+            });
+
+            console.log(`Saved: ${domain} = ${elapsed} ms on ${dateKey(startDate)}`);
+
+            currentTime = segmentEnd;
+        }
+    });
+
+    return saveQueue;
+}
+
+async function startTracking(domain, tabId) {
+    const state = await getTrackingState();
+
+    if (
+        state.currentDomain === domain &&
+        state.tabId === tabId
+    ) {
+        return;
+    }
+
+    if (state.currentDomain) {
+        await stopTracking();
+    }
+
+    await setTrackingState(
+        domain, 
+        Date.now(),
+        tabId
+    );
+
+    console.log(`Started tracking: ${domain}`);
+}
 
 
 async function stopTracking() {
@@ -43,20 +115,47 @@ async function stopTracking() {
         return;
     }
 
-    const elapsed = Date.now() - state.startTime;
-    await save_time(state.currentDomain, elapsed);
+    await save_time(
+        state.currentDomain,
+        state.startTime,
+        Date.now()
+    );
+
     console.log(`Stopped tracking: ${state.currentDomain}`);
-    await chrome.storage.session.clear();
+    await chrome.storage.session.remove([
+        "currentDomain",
+        "startTime",
+        "tabId"
+    ]);
+}
+
+async function initializeTracking() {
+    console.log("WebFocus is running!");
+
+    const [tab] = await chrome.tabs.query({
+        active:true,
+        lastFocusedWindow: true
+    });
+
+    if (!tab || !tab.url || tab.id === undefined) {
+        return;
+    }
+
+    const domain = getDomain(tab.url);
+
+    if (!domain) {
+        return;
+    }
+
+    await startTracking(domain, tab.id);
 }
 
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-    const [tab] = await chrome.tabs.query({
-        active:true,
-        lastFocusedWindow:true
-    });
+    const tab = await chrome.tabs.get(activeInfo.tabId);
 
     if (!tab || !tab.url) {
+        await stopTracking();
         return;
     }
 
@@ -67,69 +166,65 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
         return;
     }
 
-    await startTracking(domain);
+    await startTracking(domain, tab.id);
 });
 
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (!changeInfo.url || !tab.active){
+    if (!changeInfo.url || !tab.active) {
         return;
     }
 
-    const domain = getDomain(changeInfo.url);
-
-    if(!domain){
+    if (!tab.url) {
         await stopTracking();
         return;
     }
 
-    await startTracking(domain);
+    const domain = getDomain(tab.url);
+
+    if (!domain) {
+        await stopTracking();
+        return;
+    }
+
+    await startTracking(domain, tabId);
 });
 
+chrome.tabs.onRemoved.addListener(async (tabId) => {
+    const state = await getTrackingState();
 
-async function save_time (domain, time) {
-    const key = `data:${todayKey()}`;
-    const data = await chrome.storage.local.get(key);
-    const today = data[key] || {};
-    const old_time = today[domain] || 0;
-    const new_time = old_time + time;
-    
-    today[domain] = new_time;
+    if (state.tabId !== tabId) {
+        return;
+    }
 
-    await chrome.storage.local.set({
-        [key]: today
-    });
-
-    console.log(`Saved: ${domain} today = ${new_time} ms`);
-}
-
-function todayKey() {
-    const date = new Date();
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-console.log(todayKey());
+    await stopTracking();
+});
 
 chrome.alarms.create('save-time', {
     periodInMinutes: 0.5
 });
 
-chrome.alarms.onAlarm.addListener(async (alarm) => {
-    const state = await getTrackingState()
 
-    if (!state.currentDomain || !state.startTime){
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+    const state = await getTrackingState();
+ 
+    if (!state.currentDomain || !state.startTime) {
         return;
     }
-
+ 
     const now = Date.now();
-    const elapsed = now - state.startTime;
-    await save_time(state.currentDomain, elapsed);
-    await setTrackingState(state.currentDomain, now);
+ 
+    await save_time(
+        state.currentDomain,
+        state.startTime,
+        now
+    );
+ 
+    await setTrackingState(
+        state.currentDomain,
+        now,
+        state.tabId
+    );
 });
 
 
@@ -160,8 +255,8 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
         return;
     }
 
-    await startTracking(domain);
-})
+    await startTracking(domain, tab.id);
+});
 
 chrome.idle.setDetectionInterval(15);
 chrome.idle.onStateChanged.addListener(async (state) => {
@@ -184,7 +279,7 @@ chrome.idle.onStateChanged.addListener(async (state) => {
         }
 
         console.log("Current domain: " , domain);
-        await startTracking(domain);
+        await startTracking(domain, tab.id);
     }
 
     if (state === 'idle' || state === 'locked'){
@@ -193,20 +288,4 @@ chrome.idle.onStateChanged.addListener(async (state) => {
 });
 
 
-async function startTracking(domain) {
-    const state = await getTrackingState();
-    if (state.currentDomain === domain) {
-        return;
-    }
-
-    if (state.currentDomain){
-        await stopTracking();
-    }
-
-    const startTime = Date.now();
-    await setTrackingState(domain, startTime);
-    console.log(`Started tracking: ${domain}`);
-}
-
-
-
+initializeTracking();
