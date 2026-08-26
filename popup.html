@@ -5,14 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebFocus</title>
     <link rel="stylesheet" href="popup.css">
+    <link
+    rel="stylesheet"
+    href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 </head>
 <body>
-    <h1>WebFocus</h1>
-    <p id="time">0m</p>
+    <header class="header">
+        <div class="brand">
+            <div class="logo"><i class="fa-brands fa-safari"></i></div>
+            <div>
+                <h1>WebFocus</h1>
+                <span>Your browsing, focused.</span>
+            </div>
+        </div>
 
-    <div id="sites"></div>
+        <div class="status">
+            <div class="status-dot"></div>
+            Tracking
+        </div>
+    </header>
 
+    <section class="total-card">
+        <div class="total-label">Today's screen time</div>
+        <div class="total-time" id="totalTime">0m</div>
+        <div class="total-subtitle">Across all websites</div>
+    </section>
 
+    <div class="section-header">
+        <div class="section-title">
+            Websites
+        </div>
+        <div class="site-count" id="siteCount">
+            0 sites
+        </div>
+    </div>
+
+    <div class="sites" id="sites">
+        <div class="empty">
+            <div class="empty-icon">-</div>
+            <h3>No activity yet</h3>
+            <p>Start browsing and i am here to track your time broooo!</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        WebFocus | Stay Focused, I am here to that goal &lt;3
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>
