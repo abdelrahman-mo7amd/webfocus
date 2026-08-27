@@ -352,6 +352,7 @@ body {
     background: #161922;
     border: 1px solid #222735;
     border-radius: 12px;
+    flex-shrink: 0;
 }
 
 .view-button {
@@ -426,9 +427,69 @@ body {
 }
 
 
+#todayContent {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+#todayContent::-webkit-scrollbar {
+    display: none;
+}
+
 #historyContent {
     flex: 1;
     min-height: 0;
     flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
 }
 
+#historyContent::-webkit-scrollbar {
+    display: none;
+}
+
+/* history day details  */
+
+.history-day {
+    cursor: pointer;
+}
+
+.day-details-header { 
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.day-details-header button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 10px;
+    background: #222738;
+    color: #d9dce5;
+    cursor: pointer;
+}
+
+.day-details-header button:hover {
+    background: #2c3245;
+}
+
+#dayDetailsTitle {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.day-details-label {
+    color: #777e90;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.day-details-total {
+    font-size: 30px;
+    font-weight: 750;
+    margin-bottom: 20px;
+}

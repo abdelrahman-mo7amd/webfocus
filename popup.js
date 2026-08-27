@@ -196,8 +196,8 @@ async function loadHistory() {
         });
     }
 
-    const maxTime = Math.max(...days.map(day => day.total), 1);
-
+    // const maxTime = Math.max(...days.map(day => day.total), 1);
+    const maxTime = 86400000
     const container = document.getElementById("historyList");
     container.innerHTML = "";
 
@@ -205,6 +205,10 @@ async function loadHistory() {
         const percentage = (total / maxTime) * 100;
         const item = document.createElement("div");
         item.className = "history-day";
+        item.dataset.date = todayKeyFromDate(date);
+        item.addEventListener("click", () => {
+            loadDayDetails(date);
+        });
 
         item.innerHTML = `
             <div class="history-day-top">
@@ -220,6 +224,73 @@ async function loadHistory() {
             <div class="history-bar-container">
                 <div class="history-bar" style="width: ${percentage}%">
                 </div>
+            </div>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+
+async function loadDayDetails(date) {
+    const data = await chrome.storage.local.get(null);
+    const key = todayKeyFromDate(date);
+    const dayData = data[key] || {};
+
+    const sites = Object.entries(dayData)
+        .sort((a, b) => b[1] - a[1]);
+
+    const historyList = document.getElementById("historyList");
+    const details = document.getElementById("dayDetails");
+
+    historyList.style.display = "none";
+    details.style.display = "block";
+
+    document.getElementById("dayDetailsTitle").textContent =
+        formatHistoryDate(date);
+
+    const total = sites.reduce((sum, [, time]) => sum + time, 0);
+
+    document.getElementById("dayDetailsTotal").textContent =
+        formatTime(total);
+
+    const container = document.getElementById("dayDetailsSites");
+    container.innerHTML = "";
+
+    if (sites.length === 0) {
+        container.innerHTML = `
+            <div class="empty">
+                <h3>No activity</h3>
+                <p>No browsing activity was recorded on this day.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    const maxTime = sites[0][1];
+    sites.forEach(([domain, time]) => {
+        const percentage = (time / maxTime) * 100;
+
+        const item = document.createElement("div");
+        item.className = 'site';
+        item.innerHTML = `
+            <div class="site-icon">
+                <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="${domain}">
+            </div>
+
+            <div class="site-info">
+                <div class="site-name">
+                    ${domain}
+                </div>
+
+                <div class="bar-container">
+                    <div class="bar" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+
+            <div class="site-time">
+                ${formatTime(time)}
             </div>
         `;
 
@@ -267,7 +338,12 @@ historyView.addEventListener("click", () => {
     todayView.classList.remove("active");
 
     todayContent.style.display = "none";
-    historyContent.style.display = "flex";
+    historyContent.style.display = "block";
 
     loadHistory();
 })
+
+document.getElementById("dayDetailsBack").addEventListener("click", () => {
+    document.getElementById("dayDetails").style.display = "none";
+    document.getElementById("historyList").style.display = "flex";
+});
