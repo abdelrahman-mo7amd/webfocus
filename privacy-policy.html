@@ -3,9 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>WebFocus | Privcacy Policy</title>
+    <meta name="description" content="privacy policy for webfocus, a chrome extension that tracks user's time on browsing.">
+    <link rel="stylesheet" href="privacy-policy.css">
+    <link
+    rel="stylesheet"
+    href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 </head>
 <body>
-    
+    <main class="container">
+        <header>
+            <div class="brand">
+                <div class="logo"><i class="fa-brands fa-safari"></i></div>
+                <div class="brand-name">WebFocus</div>
+            </div>
+
+            <h1>Privacy Policy</h1>
+
+            <p class="updated">
+                Last updated: August 27, 2026
+            </p>
+        </header>
+
+        <div class="intro">
+            WebFocus is a chrome extension designed to help users underatand their browsing habits by tracking the amount of time they actively spend on different websites.
+
+            <br><br>
+
+            This Privacy Policy explains what information WebFocus processes, why it is used, where it is stored, and how users can manage or delete their data.
+        </div>
+
+        <section>
+            <h2>1. Information We Process</h2>
+
+            <p>
+                WebFocus processes information about the user's active browsing actively in order to provide its core time-tracking features.
+            </p>
+
+            <p>This may include:</p>
+
+            <ul>
+                <li>
+                    <strong>Website domains:</strong> the domain of the active website, such as <code>youtube.com</code> or <code>github.com</code>.
+                </li>
+
+                <li>
+                    <strong>Browsing time:</strong> the amount of active time spent on each tracked website.
+                </li>
+
+                <li>
+                    <strong>Tracking state:</strong> temporary information required to keep track of the currently active website and the beginning of the current tracking session.
+                </li>
+            </ul>
+
+            <p>
+                WebFocus does not need to know the content of webpages in order to provide its current tracking functionality.
+            </p>
+        </section>
+
+        <section>
+            <h2>2. How We Use Information</h2>
+
+            <p>
+                the information processed by webfocus is used solely to provide the extension's browsing-time tracking and statistics features.
+            </p>
+
+            <p>For example, WebFocus uses this information to:</p>
+
+            <ul>
+                <li>Measure active browsing time.</li>
+                <li>Associate browsing time with website domains.</li>
+                <li>Display daily browsing statistics.</li>
+                <li>Maintain tracking state when the extensin's background service worker restarts.</li>
+                <li>Avoid counting time when the user is idle or chrome loses focus.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. Where Your Data Is Stored</h2>
+
+            <div class="highlight">
+                <p>
+                    <strong>
+                        WebFocus currently stores browsing-time information locally in the user's browser.
+                    </strong>
+                </p>
+
+                <p>
+                    WebFocus does not currently operate a server that receives or stores your browsing-time data. 
+                </p>
+            </div>
+
+            <p>
+                WebFocus uses chrome's extension storage APIs, including
+                <code>chrome.storage.local</code> for persistent browsing 
+                statistics and <code>chrome.storage.session</code> for 
+                temporary tracking state.
+            </p>
+        </section>
+
+        <section>
+            <h2>4. Data Sharing</h2>
+
+            <p>
+                WebFocus does not sell, rent, or share your browsing-time information with advertisers, data brokers, or other third parties.
+            </p>
+
+            <p>
+                The current version of WebFocus does not transmit browsing-time data to an external server.
+            </p>
+        </section>
+
+        <section>
+            <h2>5. Website Content</h2>
+
+            <p>
+                WebFocus is designed to identify the domain of the active page for the purpose of measuring browsing time.
+            </p>
+
+            <p>
+                The current version does not need to read or analyze the contents of webpages, messages, forms, passwords, or other webpage content to provide its tracking functionality.
+            </p>
+        </section>
+
+        <section>
+            <h2>6. Permissions</h2>
+
+            <p>
+                WebFocus requests certain Chrome extension permissions because they are required for its tracking functionality.
+            </p>
+
+            <h3>Tabs</h3>
+            <p>
+                The Tabs API is used to identify the active tab and its website so that browsing time can be associated with the correct domain.
+            </p>
+
+            <h3>Storage</h3>
+
+            <p>
+                The Storage API is used to save browsing statistics and maintain temporary tracking state.
+            </p>
+
+            <h3>Alarms</h3>
+            <p>The Alarms API is used to periodically save active browsing time so that tracking data is persisted regularly.</p>
+
+
+            <h3>Idle</h3>
+            <p>The Idle API is used to detect when the user becomes idle or the device is locked, allowing WebFocus to stop counting inactive time.</p>
+        </section>
+
+        <section>
+            <h2>7. Data Retention and Deletion</h2>
+
+            <p>
+                Browsing statistics remain in the browser's extension storage until they are removed or the extension's stored data is cleared.
+            </p>
+
+            <p>
+                Users can remove WebFocus's locally stored data by removing the extension or clearning the extension's stored data through Chrome's extension settings.
+            </p>
+        </section>
+
+        <section>
+            <h2>8. Children's Privacy</h2>
+            <p>
+                WebFocus is not designed to knowingly collect personal information from children. The extension does not operate an external account system or intentionally collect identifying information.
+            </p>
+
+        </section>
+
+        <section>
+            <h2>9. Changes to This Privacy Policy</h2>
+
+            <p>
+                This Privacy Policy may be updated when WebFocus's functionality, data practices, or Privacy Practices change.
+            </p>
+
+            <p>
+                When changes are made, the "Last Updated" date at the top of this page will be updated accordingly.
+            </p>
+
+
+        </section>
+
+        <section>
+            <h2>10. Contact</h2>
+
+            <p>
+                If you have questions, concerns, or requests regarding this Privacy Policy or WebFocus's privacy practices, you can contact the WebFocus developer through the contact information provide on the chrome web store listing.
+            </p>
+        </section>
+
+        <footer>
+            © 2026 WebFocus. All rights reserved.
+        </footer>
+    </main>
 </body>
 </html>
