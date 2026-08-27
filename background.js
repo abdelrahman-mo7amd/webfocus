@@ -287,5 +287,4 @@ chrome.idle.onStateChanged.addListener(async (state) => {
     }
 });
 
-
 initializeTracking();

@@ -11,9 +11,13 @@
 </head>
 <body>
     <div class="popup-container">
+
         <header class="header">
             <div class="brand">
-                <div class="logo"><i class="fa-brands fa-safari"></i></div>
+                <div class="logo">
+                    <i class="fa-brands fa-safari"></i>
+                </div>
+
                 <div>
                     <h1>WebFocus</h1>
                     <span>I am here to help you focused &lt;3</span>
@@ -21,33 +25,59 @@
             </div>
         </header>
 
-        <section class="total-card">
-            <div class="total-label">Today's screen time</div>
-            <div class="total-time" id="totalTime">0m</div>
-            <div class="total-subtitle">Across all websites, remember your goal</div>
-        </section>
+        <main class="content">
+            <section class="total-card">
+                <div class="total-label">Today's screen time</div>
 
-        <div class="section-header">
-            <div class="section-title">
-                Websites
-            </div>
-            <div class="site-count" id="siteCount">
-                0 sites
-            </div>
-        </div>
+                <div class="total-time" id="totalTime">
+                    0m
+                </div>
 
-        <div class="sites" id="sites">
-            <div class="empty">
-                <div class="empty-icon">-</div>
-                <h3>No activity yet</h3>
-                <p>Start browsing and i am here to track your time broooo!</p>
-            </div>
-        </div>
+                <div class="total-subtitle">
+                    Across all websites, remember your goal
+                </div>
+            </section>
 
-        <div class="footer">
-            WebFocus | Stay Focused, I am here to that goal &lt;3
-        </div>
+            <div class="category-section">
+                <div class="section-header category-toggle" id="categoryToggle">
+                    <div class="section-title">
+                        Categories
+                    </div>
+
+                    <div class="category-arrow" id="categoryArrow">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <div class="categories" id="categories"></div>
+            </div>
+
+            <div class="section-header websites-header">
+                <div class="section-title">
+                    Websites
+                </div>
+                <div class="site-count" id="siteCount">
+                    0 sites
+                </div>
+            </div>
+
+            <div class="sites" id="sites">
+                <div class="empty">
+                    <div class="empty-icon">-</div>
+                    <h3>No activity yet</h3>
+                    <p>
+                        Start browsing and i am here to track
+                        your time broooo!
+                    </p>
+                </div>
+            </div>
+            <div class="footer">
+                WebFocus | Stay Focused, I am here to that goal &lt;3
+            </div>
+        </main>
     </div>
+
+    <script src="categories.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>

@@ -248,20 +248,20 @@ const category_names = {
 
 
 const category_icons = {
-    productivity: "💻",
-    development: "⚙️",
-    education: "🎓",
-    entertainment: "🎮",
-    social: "💬",
-    shopping: "🛍️",
-    news: "📰",
-    finance: "💵",
-    ai_tools: "👩‍💻",
-    health: "❤️‍🩹",
-    travel: "✈️",
-    other: "🌐",
-    government: "🏛️",
-    nonprofit_org: "🌍"
+    productivity: '<i class="fa-solid fa-list-check"></i>',
+    development: '<i class="fa-solid fa-code"></i>',
+    education: '<i class="fa-solid fa-graduation-cap"></i>',
+    entertainment: '<i class="fa-solid fa-gamepad"></i>',
+    social: '<i class="fa-solid fa-comments"></i>',
+    shopping: '<i class="fa-solid fa-bag-shopping"></i>',
+    news: '<i class="fa-solid fa-newspaper"></i>',
+    finance: '<i class="fa-solid fa-money-bill-wave"></i>',
+    ai_tools: '<i class="fa-solid fa-robot"></i>',
+    health: '<i class="fa-solid fa-heart-pulse"></i>',
+    travel: '<i class="fa-solid fa-plane"></i>',
+    other: '<i class="fa-solid fa-globe"></i>',
+    government: '<i class="fa-solid fa-building-columns"></i>',
+    nonprofit_org: '<i class="fa-solid fa-hand-holding-heart"></i>'
 };
 
 function getCategory(urlOrHost){

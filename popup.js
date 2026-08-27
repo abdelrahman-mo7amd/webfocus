@@ -1,5 +1,9 @@
 console.log("WebFocus popup is running!");
 
+const categoryToggle = document.getElementById('categoryToggle');
+const categoriesContainer = document.getElementById("categories");
+const categoryArrow = document.getElementById("categoryArrow");
+
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -26,7 +30,9 @@ chrome.storage.local.get(null).then((data)=> {
     const today = data[key] || {};
 
     const sites = Object.entries(today).sort((a,b)=> b[1] - a[1]);
-
+    const categoryTimes = calculateCategoryTimes(sites);
+    console.log("Category times:", categoryTimes);
+    htmlCategories(categoryTimes);
     const total = sites.reduce((sum, [, time])=> sum + time, 0);
 
     document.getElementById("totalTime").textContent = formatTime(total);
@@ -58,7 +64,7 @@ chrome.storage.local.get(null).then((data)=> {
         site.className = 'site';
         site.innerHTML = `
             <div class="site-icon">
-                ${getInitial(domain)}
+                <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="${domain}">
             </div>
 
             <div class="site-info">
@@ -90,59 +96,79 @@ function todayKey() {
     return `data:${year}-${month}-${day}`;
 }
 
-// async function loadData() {
-//     const key = todayKey();
-//     const data = await chrome.storage.local.get(key);
-//     const today = data[key] || {};
-//     console.log("Today's data:", today);
 
-//     let totalTime = 0;
-//     for (const domain in today) {
-//         totalTime+=today[domain];
-//     }
+function calculateCategoryTimes(sites) {
+    const categories = {};
 
-//     document.getElementById("time").textContent = formatTime(totalTime);
+    for (const [domain, time] of sites) {
+        const category = getCategory(domain);
 
-//     const sites = document.getElementById("sites");
+        if (!categories[category]) {
+            categories[category] = 0;
+        }
 
-//     const domains = Object.entries(today);
+        categories[category] += time;
+    }
 
-//     domains.sort((a,b) => b[1] - a[1]);
+    return categories;
+}
 
-//     for (const [domain, time] of domains) {
-//         const row = document.createElement("div");
-//         row.className = "site";
+function htmlCategories(categoryTimes) {
+    const container = document.getElementById("categories");
 
-//         const top = document.createElement('div');
-//         top.className = 'site-top';
+    container.innerHTML = "";
 
-//         const name = document.createElement("span");
-//         name.textContent = domain;
+    const entries = Object.entries(categoryTimes)
+        .filter(([_, time]) => time > 0)
+        .sort((a,b) => b[1] - a[1]);
 
-//         const duration = document.createElement("span");
-//         duration.textContent = formatTime(time);
+    if (entries.length === 0){
+        return;
+    }
 
-//         top.appendChild(name);
-//         top.appendChild(duration);
+    const maxTime = entries[0][1];
 
-//         const bar = document.createElement("div");
-//         bar.className = "bar";
+    entries.forEach(([category, time]) => {
+        const percentage = (time / maxTime) * 100;
 
-//         const fill = document.createElement("div");
-//         fill.className = 'bar-fill';
+        const item = document.createElement("div");
 
-//         const percentage = totalTime > 0
-//             ? (time / totalTime) * 100
-//             : 0;
+        item.className='category';
+        item.innerHTML = `
+            <div class="category-icon">
+                ${getCategoryIcon(category)}
+            </div>
 
-//         fill.style.width = `${percentage}%`;
 
-//         bar.appendChild(fill);
-//         row.appendChild(top);
-//         row.appendChild(bar);
+            <div class="category-info">
+                <div class="category-name">
+                    ${getCategoryName(category)}
+                </div>
 
-//         sites.appendChild(row);
-//     }
-// }
+                <div class="bar-container">
+                    <div class="bar" style="width: ${percentage}%">
+                    </div>
+                </div>
+            </div>
 
-// loadData();
+            <div class="category-time">
+                ${formatTime(time)}
+            </div>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+categoryToggle.addEventListener("click", ()=> {
+    const isOpen = categoriesContainer.style.display === "flex";
+
+    if (isOpen) {
+        categoriesContainer.style.display = "none";
+
+        categoryArrow.style.transform = "rotate(0deg)";
+    } else {
+        categoriesContainer.style.display = "flex";
+        categoryArrow.style.transform = "rotate(180deg)";
+    }
+});
