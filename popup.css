@@ -83,6 +83,7 @@ body {
     border-radius: 20px;
     padding: 22px;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .total-label {
@@ -121,6 +122,10 @@ body {
 }
 
 .websites-header {
+    flex-shrink: 0;
+}
+
+.category-section {
     flex-shrink: 0;
 }
 
