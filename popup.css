@@ -341,3 +341,94 @@ body {
     min-height: 0;
     overflow: hidden;
 }
+
+/* histroy  */
+
+.view-toggle {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    margin-bottom: 15px;
+    background: #161922;
+    border: 1px solid #222735;
+    border-radius: 12px;
+}
+
+.view-button {
+    flex: 1;
+    border: none;
+    border-radius: 9px;
+    padding: 8px;
+    background: transparent;
+    color: #777e90;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.view-button:hover {
+    color: #d9dce5;
+}
+
+.view-button.active {
+    background: #7157ff;
+    color: white;
+}
+
+.history-title {
+    margin-bottom: 10px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.history-list::-webkit-scrollbar {
+    display: none;
+}
+
+.history-day-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.history-day-name {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.history-day-time {
+    color: #9da4b5;
+    font-size: 12px;
+}
+
+.history-bar-container {
+    height: 5px;
+    background: #292e3c;
+    border-radius: 1000px;
+    overflow: hidden;
+}
+
+.history-bar {
+    height: 100%;
+    border-radius: 1000px;
+    background: #7157ff;
+}
+
+
+#historyContent {
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+}
+

@@ -3,6 +3,11 @@ console.log("WebFocus popup is running!");
 const categoryToggle = document.getElementById('categoryToggle');
 const categoriesContainer = document.getElementById("categories");
 const categoryArrow = document.getElementById("categoryArrow");
+const todayView = document.getElementById("todayView");
+const historyView = document.getElementById("historyView");
+const todayContent = document.getElementById("todayContent");
+const historyContent = document.getElementById("historyContent");
+
 
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
@@ -172,3 +177,97 @@ categoryToggle.addEventListener("click", ()=> {
         categoryArrow.style.transform = "rotate(180deg)";
     }
 });
+
+// history 
+async function loadHistory() {
+    const data = await chrome.storage.local.get(null);
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const key = todayKeyFromDate(date);
+        const dayData = data[key] || {};
+
+        const total = Object.values(dayData).reduce((sum, time) => sum + time, 0);
+
+        days.push({
+            date,
+            total
+        });
+    }
+
+    const maxTime = Math.max(...days.map(day => day.total), 1);
+
+    const container = document.getElementById("historyList");
+    container.innerHTML = "";
+
+    days.reverse().forEach(({date, total}) => {
+        const percentage = (total / maxTime) * 100;
+        const item = document.createElement("div");
+        item.className = "history-day";
+
+        item.innerHTML = `
+            <div class="history-day-top">
+                <div class="history-day-name">
+                    ${formatHistoryDate(date)}
+                </div>
+
+                <div class="history-day-time">
+                    ${formatTime(total)}
+                </div>
+            </div>
+
+            <div class="history-bar-container">
+                <div class="history-bar" style="width: ${percentage}%">
+                </div>
+            </div>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+function todayKeyFromDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `data:${year}-${month}-${day}`;
+}
+
+function formatHistoryDate(date) {
+    const today = new Date();
+
+    if (
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate()
+    ) {
+        return "Today";
+    }
+
+    return date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric"
+    });
+}
+
+
+todayView.addEventListener("click", () => {
+    todayView.classList.add("active");
+    historyView.classList.remove("active");
+
+    todayContent.style.display = "block";
+    historyContent.style.display = "none";
+});
+
+historyView.addEventListener("click", () => {
+    historyView.classList.add("active");
+    todayView.classList.remove("active");
+
+    todayContent.style.display = "none";
+    historyContent.style.display = "flex";
+
+    loadHistory();
+})

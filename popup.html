@@ -38,39 +38,61 @@
                 </div>
             </section>
 
-            <div class="category-section">
-                <div class="section-header category-toggle" id="categoryToggle">
+            <div class="view-toggle">
+                <button class="view-button active" id="todayView">
+                    Today
+                </button>
+
+                <button class="view-button" id="historyView">
+                    7 Days
+                </button>
+            </div>
+
+            <div id="todayContent">
+                <div class="category-section">
+                    <div class="section-header category-toggle" id="categoryToggle">
+                        <div class="section-title">
+                            Categories
+                        </div>
+
+                        <div class="category-arrow" id="categoryArrow">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <div class="categories" id="categories"></div>
+                </div>
+
+                <div class="section-header websites-header">
                     <div class="section-title">
-                        Categories
+                        Websites
                     </div>
-
-                    <div class="category-arrow" id="categoryArrow">
-                        <i class="fa-solid fa-chevron-down"></i>
+                    <div class="site-count" id="siteCount">
+                        0 sites
                     </div>
                 </div>
 
-                <div class="categories" id="categories"></div>
+                <div class="sites" id="sites">
+                    <div class="empty">
+                        <div class="empty-icon">-</div>
+                        <h3>No activity yet</h3>
+                        <p>
+                            Start browsing and i am here to track
+                            your time broooo!
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="section-header websites-header">
-                <div class="section-title">
-                    Websites
+
+            <div id="historyContent" style="display: none;">
+                <div class="section-title history-title">
+                    Last 7 Days
                 </div>
-                <div class="site-count" id="siteCount">
-                    0 sites
-                </div>
+
+                <div id="historyList" class="history-list"></div>
             </div>
 
-            <div class="sites" id="sites">
-                <div class="empty">
-                    <div class="empty-icon">-</div>
-                    <h3>No activity yet</h3>
-                    <p>
-                        Start browsing and i am here to track
-                        your time broooo!
-                    </p>
-                </div>
-            </div>
             <div class="footer">
                 WebFocus | Stay Focused, I am here to that goal &lt;3
             </div>
