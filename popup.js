@@ -376,8 +376,85 @@ async function loadDailyStat() {
     container.innerHTML = "";
 
     container.innerHTML = `
-        
-    `
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div class="stat-card-info">
+                <div class="stat-card-label">
+                    Total screen time
+                </div>
+
+                <div class="stat-card-value">
+                    ${formatTime(total)}
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fa-solid fa-globe"></i>
+            </div>
+
+            <div class="stat-card-info">
+                <div class="stat-card-label">
+                    Websites visited
+                </div>
+
+                <div class="stat-card-value">
+                    ${sites.length}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+            </div>
+
+            <div class="stat-card-info">
+                <div class="stat-card-label">
+                    Most visited Website
+                </div>
+
+                <div class="stat-card-value">
+                    ${mostUsedSite ? mostUsedSite[0]: "none"}
+                </div>
+
+                <div class="stat-card-small">
+                    ${mostUsedSite ? formatTime(mostUsedSite[1]): "0s"}
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+
+            <div class="stat-card-info">
+                <div class="stat-card-label">
+                    Most used category
+                </div>
+
+                <div class="stat-card-value">
+                    ${mostUsedCategory 
+                        ? getCategoryName(mostUsedCategory[0])
+                        : "None"
+                    }
+                </div>
+
+                <div class="stat-card-small">
+                    ${mostUsedCategory 
+                        ? formatTime(mostUsedCategory[1])
+                        : "0s"
+                    }
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 async function loadWeeklyStat() {
@@ -414,3 +491,12 @@ weeklyStatView.addEventListener("click", () => {
     loadWeeklyStat();
 });
 
+const statBackButton = document.getElementById("statBackButton");
+
+statBackButton.addEventListener("click", () => {
+    statContent.style.display = "none";
+    todayContent.style.display = "block";
+
+    todayView.classList.add("active");
+    historyView.classList.remove("active");
+});

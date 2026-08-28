@@ -1,4 +1,6 @@
 let saveQueue = Promise.resolve();
+const heartbeat_key = 'lastHeartbeat';
+const max_gap_ms = 3 * 60 * 1000;
 
 function getDomain(url) {
     try {
@@ -79,8 +81,8 @@ function save_time(domain, startTime, endTime) {
 
             currentTime = segmentEnd;
         }
-    });
-
+    })
+    .catch(err=> console.error("save_time failed:", err));
     return saveQueue;
 }
 
@@ -129,6 +131,11 @@ async function stopTracking() {
     ]);
 }
 
+async function isFocusedWindow(windowId) {
+    const window = await chrome.windows.get(windowId);
+    return window.focused;
+}
+
 async function initializeTracking() {
     console.log("WebFocus is running!");
 
@@ -150,8 +157,42 @@ async function initializeTracking() {
     await startTracking(domain, tab.id);
 }
 
+async function checkForSleepGap() {
+    const data = await chrome.storage.session.get([heartbeat_key]);
+    const state = await getTrackingState();
+    const now = Date.now();
+    const lastHeartbeat = data [heartbeat_key] || null;
+
+    if (
+        state.currentDomain && 
+        state.startTime && 
+        lastHeartbeat && 
+        (now - lastHeartbeat > max_gap_ms) 
+    ) {
+        const gapMinutes = Math.round((now - lastHeartbeat) / 60000);
+        console.log(`Detected a ${gapMinutes} minute gap (likely sleep/suspend). Only crediting time up to the last confirmed-awake heartbeat.`);
+
+        await save_time(state.currentDomain, state.startTime, lastHeartbeat);
+        await chrome.storage.session.remove(['currentDomain', 'startTime', 'tabId']);
+    }
+
+    await chrome.storage.session.set({ [heartbeat_key]: now });
+}
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name !== 'save-time') {
+        return;
+    }
+
+    await checkForSleepGap();
+});
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
+
+    if (!await isFocusedWindow(activeInfo.windowId)) {
+        return;
+    }
+
     const tab = await chrome.tabs.get(activeInfo.tabId);
 
     if (!tab || !tab.url) {
@@ -172,6 +213,10 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (!changeInfo.url || !tab.active) {
+        return;
+    }
+
+    if (!await isFocusedWindow(tab.windowId)) {
         return;
     }
 
@@ -288,3 +333,4 @@ chrome.idle.onStateChanged.addListener(async (state) => {
 });
 
 initializeTracking();
+checkForSleepGap();
