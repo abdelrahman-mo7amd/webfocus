@@ -8,6 +8,14 @@ const historyView = document.getElementById("historyView");
 const todayContent = document.getElementById("todayContent");
 const historyContent = document.getElementById("historyContent");
 
+const statButton = document.getElementById("statButton");
+const statContent = document.getElementById("statContent");
+
+const dailyStatView = document.getElementById("dailyStatView");
+const weeklyStatView = document.getElementById("weeklyStatView");
+
+const dailyStatContent = document.getElementById("dailyStatContent");
+const weeklyStatContent = document.getElementById("weeklyStatContent");
 
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
@@ -329,6 +337,7 @@ todayView.addEventListener("click", () => {
     todayView.classList.add("active");
     historyView.classList.remove("active");
 
+    statContent.style.display = "none";
     todayContent.style.display = "block";
     historyContent.style.display = "none";
 });
@@ -337,6 +346,8 @@ historyView.addEventListener("click", () => {
     historyView.classList.add("active");
     todayView.classList.remove("active");
 
+
+    statContent.style.display = "none";
     todayContent.style.display = "none";
     historyContent.style.display = "block";
 
@@ -347,3 +358,59 @@ document.getElementById("dayDetailsBack").addEventListener("click", () => {
     document.getElementById("dayDetails").style.display = "none";
     document.getElementById("historyList").style.display = "flex";
 });
+
+// statistics 
+async function loadDailyStat() {
+    const data = await chrome.storage.local.get(null);
+    const today = data[todayKey()] || {};
+    const sites = Object.entries(today).sort((a,b) => b[1] - a[1]);
+    const total = sites.reduce((sum, [, time]) => sum+time, 0);
+
+    const categoryTimes = calculateCategoryTimes(sites);
+    const categories = Object.entries(categoryTimes).sort((a, b) => b[1] - a[1]);
+
+    const mostUsedSite = sites[0];
+    const mostUsedCategory = categories[0];
+
+    const container = document.getElementById("dailyStatList");
+    container.innerHTML = "";
+
+    container.innerHTML = `
+        
+    `
+}
+
+async function loadWeeklyStat() {
+
+}
+
+
+
+statButton.addEventListener("click", () => {
+    todayContent.style.display = "none";
+    historyContent.style.display = "none";
+    statContent.style.display = "flex";
+
+    loadDailyStat();
+});
+
+dailyStatView.addEventListener("click", () => {
+    dailyStatView.classList.add("active");
+    weeklyStatView.classList.remove("active");
+
+    dailyStatContent.style.display = "block";
+    weeklyStatContent.style.display = "none";
+
+    loadDailyStat();
+})
+
+weeklyStatView.addEventListener("click", () => {
+    weeklyStatView.classList.add("active");
+    dailyStatView.classList.remove("active");
+
+    dailyStatContent.style.display = "none";
+    weeklyStatContent.style.display = "block";
+
+    loadWeeklyStat();
+});
+

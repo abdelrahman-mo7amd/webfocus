@@ -23,6 +23,11 @@
                     <span>I am here to help you focused &lt;3</span>
                 </div>
             </div>
+
+            <button class="statistics-button" id="statButton">
+                <span>Statistics</span>
+                <i class="fa-solid fa-chart-column"></i>
+            </button>
         </header>
 
         <main class="content">
@@ -118,6 +123,40 @@
                     <div id="dayDetailsSites"></div>
                 </div>
             </div>
+
+            <div id="statContent" style="display: none;">
+                <div class="stat-header">
+                    <div>
+                        <div class="section-title">Statistics</div>
+                        <div class="stat-subtitle">
+                            Understand your browsing habits bruh
+                        </div>
+                    </div>
+                </div>
+
+                <div class="view-toggle stat-toggle">
+                    <button class="view-button active" id="dailyStatView">
+                        Daily
+                    </button>
+
+                    <button class="view-button" id="weeklyStatView">
+                        Weekly
+                    </button>
+                </div>
+
+                <div id="dailyStatContent">
+                    <div class="stat-list" id="dailyStatList">
+
+                    </div>
+                </div>
+
+                <div id="weeklyStatContent" style="display: none;">
+                    <div class="stat-list" id="weeklyStatList">
+
+                    </div>
+                </div>
+            </div>
+
 
             <div class="footer">
                 WebFocus | Stay Focused, I am here to that goal &lt;3
