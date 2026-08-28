@@ -31,17 +31,40 @@
         </header>
 
         <main class="content">
-            <section class="total-card">
-                <div class="total-label">Today's screen time</div>
+            <div class="dashboard-cards">
+                <section class="total-card">
+                    <div class="total-label">Today's screen time</div>
 
-                <div class="total-time" id="totalTime">
-                    0m
-                </div>
+                    <div class="total-time" id="totalTime">
+                        0m
+                    </div>
 
-                <div class="total-subtitle">
-                    Across all websites, remember your goal
-                </div>
-            </section>
+                    <div class="total-subtitle">
+                        Across all websites, remember your goal
+                    </div>
+                </section>
+
+                <section class="goal-card">
+                    <div class="goal-label">
+                        DAILY GOAL
+                    </div>
+
+                    <div class="goal-tank">
+                        <div class="goal-liquid" id="goalLiquid">
+                            <div class="wave wave-one"></div>
+                            <div class="wave wave-two"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-percentage" id="goalPercentage">
+                        0%
+                    </div>
+
+                    <div class="goal-time" id="goalTime">
+                        0m / 3h
+                    </div>
+                </section>
+            </div>
 
             <div class="view-toggle">
                 <button class="view-button active" id="todayView">

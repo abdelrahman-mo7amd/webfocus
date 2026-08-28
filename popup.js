@@ -17,6 +17,18 @@ const weeklyStatView = document.getElementById("weeklyStatView");
 const dailyStatContent = document.getElementById("dailyStatContent");
 const weeklyStatContent = document.getElementById("weeklyStatContent");
 
+const statBackButton = document.getElementById("statBackButton");
+
+const productive_categories = new Set([
+    "productive",
+    "ai_tools",
+    "development",
+    "finance",
+    "education"
+]);
+
+const daily_goal_ms = 3*60*60*1000;
+
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -44,9 +56,13 @@ chrome.storage.local.get(null).then((data)=> {
 
     const sites = Object.entries(today).sort((a,b)=> b[1] - a[1]);
     const categoryTimes = calculateCategoryTimes(sites);
+    
     console.log("Category times:", categoryTimes);
     htmlCategories(categoryTimes);
-    const total = sites.reduce((sum, [, time])=> sum + time, 0);
+
+    updateGoalTracker(sites);
+
+    const total = sites.reduce((sum, [, time]) => sum + time, 0);
 
     document.getElementById("totalTime").textContent = formatTime(total);
 
@@ -491,7 +507,6 @@ weeklyStatView.addEventListener("click", () => {
     loadWeeklyStat();
 });
 
-const statBackButton = document.getElementById("statBackButton");
 
 statBackButton.addEventListener("click", () => {
     statContent.style.display = "none";
@@ -500,3 +515,54 @@ statBackButton.addEventListener("click", () => {
     todayView.classList.add("active");
     historyView.classList.remove("active");
 });
+
+
+// productivity goal 
+function calculateProductiveTime(sites) {
+    let productiveTime = 0;
+    for (const [domain, time] of sites) { 
+        const category = getCategory(domain);
+        if (productive_categories.has(category)) { 
+            productiveTime += time; 
+        } 
+    } 
+    
+    return productiveTime; 
+}
+
+function updateGoalTracker(sites) {
+    const productiveTime = calculateProductiveTime(sites);
+
+    const progress = Math.min(productiveTime / daily_goal_ms, 1);
+
+    const percentage = Math.round(progress * 100);
+
+    const goalLiquid = document.getElementById("goalLiquid");
+
+    if (goalLiquid) {
+        goalLiquid.style.setProperty(
+            "--goal-progress",
+            `${progress * 100}%`
+        );
+    }
+
+    const goalPercentage = document.getElementById("goalPercentage");
+
+    if (goalPercentage) {
+        goalPercentage.textContent = `${percentage}%`
+    }
+
+    const goalTime = document.getElementById("goalTime");
+
+    if (goalTime) {
+        goalTime.textContent = `${formatTime(productiveTime)} / ${formatTime(daily_goal_ms)}`;
+    }
+
+    console.log(
+        "Productive goal:",
+        formatTime(productiveTime),
+        "/",
+        formatTime(daily_goal_ms)
+    );
+}
+

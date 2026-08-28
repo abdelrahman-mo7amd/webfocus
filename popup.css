@@ -75,21 +75,32 @@ body {
     margin-top: 2px;
 }
 
-.total-card {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #191d2b, #151824);
-    border: 1px solid #282d3d;
-    border-radius: 20px;
-    padding: 22px;
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 12px;
     margin-bottom: 20px;
     flex-shrink: 0;
 }
 
+
+.total-card {
+    background: linear-gradient(135deg, #191d2b, #151824);
+    border: 1px solid #282d3d;
+    border-radius: 20px;
+    padding: 20px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .total-label {
     color: #969cad;
-    font-size: 12px;
+    font-size: 11px;
     margin-bottom: 7px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
 }
 
 .total-time {
@@ -99,10 +110,109 @@ body {
 }
 
 .total-subtitle {
-    margin-top: 7px;
+    margin-top: 6px;
     color: #777e90;
-    font-size: 11px;
+    font-size: 10px;
 }
+
+.goal-card {
+    position: relative;
+    padding: 15px;
+    border-radius: 20px;
+    background: #10131c;
+    border: 1px solid #282d3d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35);
+}
+
+.goal-tank {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    z-index: 0;
+}
+
+.goal-liquid {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--goal-progress , 48%);
+    background: linear-gradient(180deg, #7957ff 0%, #5235e6 100%);
+    box-shadow: 0 -5px 25px rgba(113, 87, 255, 0.25);
+    transition: 0.6s;
+    overflow: visible;
+}
+
+.wave {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 200%;
+    padding-bottom: 200%;
+    background: inherit;
+    border-radius: 45%;
+    transform-origin: 50% 50%;
+}
+
+.wave-one {
+    opacity: 0.5;
+    animation: spin 9s linear infinite;
+}
+
+.wave-two {
+    opacity: 0.8;
+    animation: spin 7s linear infinite reverse;
+}
+
+@keyframes spin {
+    from { 
+        transform: translate(-50%, -75%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -75%) rotate(360deg);
+    }
+}
+
+.goal-label {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    color: #aeb5c7;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.goal-percentage {
+    position: relative;
+    z-index: 3;
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 750;
+    margin-top: auto;
+}
+
+.goal-time {
+    position: relative;
+    z-index: 3;
+    margin-top: 4px;
+    margin-bottom: auto;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+}
+
 
 .section-header {
     display: flex;
